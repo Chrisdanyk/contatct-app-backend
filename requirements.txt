@@ -1,5 +1,6 @@
 asgiref==3.6.0
 attrs==22.2.0
+autopep8==2.0.2
 cachetools==5.3.0
 certifi==2022.12.7
 chardet==5.1.0
@@ -10,6 +11,8 @@ coreschema==0.0.4
 coverage==7.2.2
 distlib==0.3.6
 Django==4.1.7
+django-cors-headers==3.14.0
+django-filter==23.1
 djangorestframework==3.14.0
 djangorestframework-simplejwt==5.2.2
 drf-yasg==1.21.5

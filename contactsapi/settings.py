@@ -26,8 +26,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv("SECRET_KEY")
 JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
-TOKEN_LIFETIME_UNIT = os.getenv("ACCESS_TOKEN_LIFETIME_UNIT", "minutes")
-TOKEN_LIFETIME = int(os.getenv("ACCESS_TOKEN_LIFETIME", 5))
+TOKEN_LIFETIME_UNIT = os.getenv("ACCESS_TOKEN_LIFETIME_UNIT", "days")
+TOKEN_LIFETIME = int(os.getenv("ACCESS_TOKEN_LIFETIME", 1))
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", True)
@@ -36,9 +36,20 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 HOSTNAME = os.getenv("HOSTNAME")
 
 REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'contactsapi.exception_handler.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
+}
+
+SWAGGER_SETTINGS = {
+    'SECURITY_DEFINITIONS': {
+        "Auth Token eg [Bearer (JWT) ]": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
+        }
+    }
 }
 
 # Application definition
@@ -51,7 +62,10 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
+    'drf_yasg',
+    'django_filters',
     'authentication',
+    'contact',
 ]
 
 MIDDLEWARE = [
