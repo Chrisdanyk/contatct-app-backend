@@ -29,6 +29,17 @@ JWT_SECRET_KEY = os.getenv("JWT_SECRET_KEY")
 TOKEN_LIFETIME_UNIT = os.getenv("ACCESS_TOKEN_LIFETIME_UNIT", "days")
 TOKEN_LIFETIME = int(os.getenv("ACCESS_TOKEN_LIFETIME", 1))
 
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(**{TOKEN_LIFETIME_UNIT: TOKEN_LIFETIME}),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'SIGNING_KEY': JWT_SECRET_KEY,
+}
+
+if os.environ.get('CORS_ALLOWED_ORIGINS'):
+    CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS').split(',')
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG", True)
 
@@ -36,7 +47,6 @@ ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS').split(',')
 HOSTNAME = os.getenv("HOSTNAME")
 
 REST_FRAMEWORK = {
-    'EXCEPTION_HANDLER': 'contactsapi.exception_handler.custom_exception_handler',
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     )
@@ -64,13 +74,16 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'django_filters',
+    'corsheaders',
     'authentication',
     'contact',
+    
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -145,7 +158,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = 'static/'
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 

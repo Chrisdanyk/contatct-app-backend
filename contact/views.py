@@ -4,7 +4,6 @@ from contact.serializers import ContactSerializer
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-from contactsapi.exception_handler import AccessDeniedException
 
 from helpers.pagination import CustomPageNumberPagination
 
@@ -50,7 +49,7 @@ class GetUpdateDeleteContactView(generics.RetrieveUpdateDestroyAPIView):
                 status=status.HTTP_404_NOT_FOUND
                 )
         if contact.owner != self.request.user:
-            return AccessDeniedException("Permission Denied")
+            return PermissionDenied("Permission Denied")
         serializer = ContactSerializer(contact)
         return response.Response(
             {"message": "success",
@@ -76,7 +75,7 @@ class GetUpdateDeleteContactView(generics.RetrieveUpdateDestroyAPIView):
     def put(self, request, *args, **kwargs):
         instance = Contact.objects.select_related('owner').filter(
             id=self.kwargs["id"], owner=self.request.user).first()
-        if instance.owner is not self.request.user:
+        if instance.owner != self.request.user:
             return PermissionDenied()
         serializer = self.get_serializer(
             instance, data=request.data, partial=True)
